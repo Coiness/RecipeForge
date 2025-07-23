@@ -1,0 +1,268 @@
+.sidebar {
+  background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+  border-right: 1px solid #e2e8f0;
+  width: 250px;
+  min-height: 100vh;
+  padding: 24px 0;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 64px;
+  overflow-y: auto;
+  transition: all 0.3s ease;
+}
+
+.sidebar h2 {
+  color: #1e293b;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0 0 24px 0;
+  padding: 0 24px 16px 24px;
+  border-bottom: 2px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sidebar h2::before {
+  content: "⚒️";
+  font-size: 1rem;
+}
+
+.sidebar nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar nav li {
+  position: relative;
+}
+
+.sidebar nav a {
+  display: flex;
+  align-items: center;
+  color: #475569;
+  text-decoration: none;
+  padding: 12px 24px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  position: relative;
+  border-left: 3px solid transparent;
+}
+
+.sidebar nav a::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #3b82f6;
+  transform: scaleY(0);
+  transition: transform 0.2s ease;
+}
+
+.sidebar nav a:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+  border-left-color: #3b82f6;
+  padding-left: 28px;
+}
+
+.sidebar nav a:hover::before {
+  transform: scaleY(1);
+}
+
+.sidebar nav a.active {
+  background: #eff6ff;
+  color: #1e40af;
+  border-left-color: #3b82f6;
+  font-weight: 600;
+}
+
+.sidebar nav a.active::before {
+  transform: scaleY(1);
+}
+
+/* 图标样式 */
+.sidebar nav a[href="/recipes"]::after {
+  content: "📝";
+  margin-left: auto;
+  font-size: 1rem;
+}
+
+.sidebar nav a[href="/inventory"]::after {
+  content: "📦";
+  margin-left: auto;
+  font-size: 1rem;
+}
+
+.sidebar nav a[href="/calculator"]::after {
+  content: "🧮";
+  margin-left: auto;
+  font-size: 1rem;
+}
+
+/* 折叠状态 */
+.sidebar.collapsed {
+  width: 64px;
+  padding: 24px 8px;
+}
+
+.sidebar.collapsed h2 {
+  display: none;
+}
+
+.sidebar.collapsed nav a {
+  padding: 12px 16px;
+  justify-content: center;
+  position: relative;
+}
+
+.sidebar.collapsed nav a span {
+  display: none;
+}
+
+.sidebar.collapsed nav a::after {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+/* 工具提示 */
+.sidebar.collapsed nav a {
+  position: relative;
+}
+
+.sidebar.collapsed nav a:hover::before {
+  content: attr(title);
+  position: absolute;
+  left: 72px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #1e293b;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: -250px;
+    top: 0;
+    width: 250px;
+    height: 100vh;
+    z-index: 999;
+    background: #ffffff;
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.15);
+    transition: left 0.3s ease;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+
+  .sidebar h2 {
+    margin-top: 64px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 200px;
+    left: -200px;
+  }
+
+  .sidebar nav a {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+
+  .sidebar h2 {
+    font-size: 1.1rem;
+    padding: 0 16px 16px 16px;
+  }
+}
+
+/* 滚动条样式 */
+.sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 2px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+  .sidebar {
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    border-right-color: #334155;
+  }
+
+  .sidebar h2 {
+    color: #f1f5f9;
+    border-bottom-color: #334155;
+  }
+
+  .sidebar nav a {
+    color: #cbd5e1;
+  }
+
+  .sidebar nav a:hover {
+    background: #334155;
+    color: #f1f5f9;
+  }
+
+  .sidebar nav a.active {
+    background: #1e40af;
+    color: #dbeafe;
+  }
+
+  .sidebar::-webkit-scrollbar-thumb {
+    background: #475569;
+  }
+
+  .sidebar::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+  }
+}
+
+/* 动画效果 */
+.sidebar nav li {
+  opacity: 0;
+  animation: slideInLeft 0.3s ease forwards;
+}
+
+.sidebar nav li:nth-child(1) { animation-delay: 0.1s; }
+.sidebar nav li:nth-child(2) { animation-delay: 0.2s; }
+.sidebar nav li:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
