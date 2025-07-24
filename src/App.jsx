@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import Header from './components/UI/Header';
-import Sidebar from './components/UI/Sidebar';
 import MainLayout from './components/Layout/MainLayout';
 import RecipeList from './components/Recipe/RecipeList';
 import InventoryManager from './components/Inventory/InventoryManager';
 import CraftingCalculator from './components/Calculator/CraftingCalculator';
+import OrderPage from './components/Order/order';
 import './styles/globals.css';
 import store from './store';
 
@@ -23,6 +23,7 @@ function App() {
           <Route path="/recipes" element={<RecipeList />} />
           <Route path="/inventory" element={<InventoryManager />} />
           <Route path="/calculator" element={<CraftingCalculator />} />
+          <Route path="/orders" element={<OrderPage />} />
         </Routes>
       </MainLayout>
     </Router>
