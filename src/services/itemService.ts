@@ -67,38 +67,41 @@ export class ItemService {
         return newItem;
         }
 
-        /**
-         * 更新现有物品
-         * @param id 物品ID
-         * @param updates 需要更新的字段
-         * @return 更新后的物品对象
-         */
-        updateItem(id:string,updates:Partial<Omit<Item,'id'>>):Item{
-            //为什么用Partial？因为可能只更新部分字段
-            //为什么使用Omit？因为不允许更新ID字段
-            //为什么用findIndex？因为需要找到物品在数组中的索引
-            const index = this.items.findIndex(item => item.id === id);
+    /**
+     * 更新现有物品
+     * @param id 物品ID
+     * @param updates 需要更新的字段
+     * @return 更新后的物品对象
+     */
+    updateItem(id:string,updates:Partial<Omit<Item,'id'>>):Item{
+        //为什么用Partial？因为可能只更新部分字段
+        //为什么使用Omit？因为不允许更新ID字段
+        //为什么用findIndex？因为需要找到物品在数组中的索引
+        const index = this.items.findIndex(item => item.id === id);
 
-            if(index === -1){
-                throw new Error(`物品ID ${id} 不存在`);
-            }
+        if(index === -1){
+            throw new Error(`物品ID ${id} 不存在`);
+        }
 
-            //trim()方法用于去除字符串两端的空格
-            if(updates.name !== undefined && !updates.name.trim()){
-                throw new Error("物品名称不能为空");
-            }
+        //trim()方法用于去除字符串两端的空格
+        if(updates.name !== undefined && !updates.name.trim()){
+            throw new Error("物品名称不能为空");
+        }
 
-            //创建更新后的物品
-            //这个为什么要三次...？
-            const updatedItem:Item = {
-                ...this.items[index],
-                ...updates,
-                ...(updates.name && {name:updates.name.trim()}), // 如果提供了名称，则去除两端空格
-            }
+        //创建更新后的物品
+        //这个为什么要三次...？
+        //第一次，复制原物品的属性
+        //第二次，复制更新的属性
+        //第三次，如果提供了名称，则去除两端空格
+        const updatedItem:Item = {
+            ...this.items[index],
+            ...updates,
+            ...(updates.name && {name:updates.name.trim()}), // 如果提供了名称，则去除两端空格
+        }
 
-            //更新物品列表
-            this.items[index] = updatedItem;
-            return updatedItem;
+        //更新物品列表
+        this.items[index] = updatedItem;
+        return updatedItem;
     }
 
     /**
