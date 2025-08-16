@@ -129,3 +129,7 @@ export class OrderService{
      */
 
 }
+
+export function createOrderService(initialOrders: Order[] = []): OrderService {
+    return new OrderService(initialOrders);
+}
