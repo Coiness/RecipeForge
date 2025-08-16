@@ -15,39 +15,51 @@ const initialState:ItemState = {
 
 export default function itemReducer(state = initialState,action:any):ItemState{
     switch(action.type){
+        case 'ITEM_LOADING':
+            return {
+                ...state,
+                loading: action.loading
+            }
+
+
         case ADD_ITEM:
             return{
                 ...state,
                 items:[...state.items,action.payload],
-                error:null
+                error:null,
+                loading:action.loading
             }
 
-        case UPDATE_ITEM{
+        case UPDATE_ITEM:
             return{
                 ...state,
                 items:state.items.map(item=>item.id === action.payload.id ? action.payload : item),
-                error:null
+                error:null,
+                loading:action.loading
             }
-        }
+        
 
         case DELETE_ITEM:
             return{
                 ...state,
                 items:state.items.filter(item => item.id!== action.payload.id),
-                error:null
+                error:null,
+                loading:action.loading
         }
 
         case SET_ITEMS:
             return{
                 ...state,
                 items: action.payload,
-                error: null
+                error: null,
+                loading:action.loading
             }
 
         case ITEM_ERROR:
             return{
                 ...state,
-                error: action.payload
+                error: action.payload,
+                loading: action.loading
             }
 
         default:

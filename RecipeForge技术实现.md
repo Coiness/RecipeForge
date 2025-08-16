@@ -27,7 +27,7 @@
 - 构建工具：`Vite`
 - 框架：`React`
 - 语言：`TypeScript`
-- 状态管理：`reduce`
+- 状态管理：`redux`
 - 重叠样式表：`TailwindCSS`
 - 网络请求：`Axios`
 - 代码规范：`ESLint`
