@@ -9,13 +9,14 @@ export const UPDATE_ITEM = 'UPDATE_ITEM'
 export const DELETE_ITEM = 'DELETE_ITEM';
 export const SET_ITEMS = 'SET_ITEMS';
 export const ITEM_ERROR = 'ITEM_ERROR';
+export const ITEM_LOADING = 'ITEM_LOADING'; 
 
 // 使用 loading 标志而不是单独的 action
 export const addItem = (name: string, iconUrl: string = '') => {
   return async (dispatch: Dispatch) => {
     try {
       // 发送带有 loading: true 的通知
-      dispatch({ type: 'ITEM_LOADING', loading: true });
+      dispatch({ type: ITEM_LOADING, loading: true });
       
       const newItem = itemService.createItem(name, iconUrl);
       
@@ -42,7 +43,7 @@ export const addItem = (name: string, iconUrl: string = '') => {
 export const updateItem = (id:string,updates:Partial<Omit<Item,'id'>>) =>{
   return async (dispatch: Dispatch) => {
     try{
-      dispatch({ type: 'ITEM_LOADING', loading: true });
+      dispatch({ type: ITEM_LOADING, loading: true });
       const updateItem = itemService.updateItem(id,updates);
       dispatch({
         type: UPDATE_ITEM,
@@ -65,7 +66,7 @@ export const updateItem = (id:string,updates:Partial<Omit<Item,'id'>>) =>{
 export const deleteItem = (id:string) => {
     return async (dispatch:Dispatch) =>{
       try{
-        dispatch({ type: 'ITEM_LOADING', loading: true });
+        dispatch({ type: ITEM_LOADING, loading: true });
         itemService.deleteItem(id);
         dispatch({
           type: DELETE_ITEM,
@@ -87,7 +88,7 @@ export const deleteItem = (id:string) => {
 export const setItems = (items:Item[])=>{
   return async (dispatch:Dispatch)=>{
     try{
-      dispatch({ type: 'ITEM_LOADING', loading: true });
+      dispatch({ type: ITEM_LOADING, loading: true });
       dispatch({
         type: SET_ITEMS,
         payload: items,

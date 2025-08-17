@@ -13,12 +13,13 @@ export const DELETE_ORDER = 'DELETE_ORDER';
 export const UPDATE_ORDER = 'UPDATE_ORDER';
 export const SET_ORDERS = 'SET_ORDERS'; 
 export const ORDER_ERROR = 'ORDER_ERROR';
+export const ORDER_LOADING = 'ORDER_LOADING';
 
 export const addOrder = (name:string,recipes:Recipe_For_Order[]) =>{
     return async (dispatch: Dispatch) => {
         try{
             dispatch({
-            type: 'ORDER_LOADING', 
+            type: ORDER_LOADING, 
             loading: true})
 
             const newOrder = orderService.createOrder(name, recipes);
@@ -45,7 +46,7 @@ export const addOrder = (name:string,recipes:Recipe_For_Order[]) =>{
 export const updateOrder = (id:string,updates:Partial<Omit<Order,'id'>>) =>{
     return async (dispatch:Dispatch) => {
         try{
-            dispatch({type: 'ORDER_LOADING', loading: true});
+            dispatch({type: ORDER_LOADING, loading: true});
             const updatedOrder = orderService.updateOrder(id, updates);
             dispatch({
                 type: UPDATE_ORDER,
@@ -67,7 +68,7 @@ export const updateOrder = (id:string,updates:Partial<Omit<Order,'id'>>) =>{
 export const deleteOrder = (id:string) => {
     return async (dispatch: Dispatch) => {
         try{
-            dispatch({ type: 'ORDER_LOADING', loading: true });
+            dispatch({ type: ORDER_LOADING, loading: true });
             orderService.deleteOrder(id);
             dispatch({
                 type: DELETE_ORDER,
@@ -89,7 +90,7 @@ export const deleteOrder = (id:string) => {
 export const setOrders = (orders: Order[]) => {
     return async (dispatch: Dispatch) => {
         try{
-            dispatch({ type: 'ORDER_LOADING', loading: true });
+            dispatch({ type: ORDER_LOADING, loading: true });
             dispatch({
                 type: SET_ORDERS,
                 payload: orders,

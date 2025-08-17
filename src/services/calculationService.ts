@@ -1,4 +1,4 @@
-import type { Item, Item_For_Recipe,Recipe, Recipe_For_Order  } from "../types";
+import type { Item_For_Recipe,Recipe} from "../types";
 import type { Order } from "../types";
 
 /**
@@ -7,6 +7,7 @@ import type { Order } from "../types";
 export class CalculationService {
   private recipes: Recipe[] = [];
   private recipeMap: Map<string, Recipe> = new Map(); // 用于快速查找配方
+  private recipePreferences: Map<string, string> = new Map(); // 用于存储配方偏好设置
 
   /**
    * 初始化计算服务
@@ -28,6 +29,20 @@ export class CalculationService {
     for (const recipe of recipes) {
       this.recipeMap.set(recipe.id, recipe);
     }
+  }
+
+  /**
+   *配置物品的首选配方 
+   */
+  setPreferredRecipe(itemId: string, recipeId: string): void {
+    this.recipePreferences.set(itemId, recipeId);
+  }
+
+  /**
+   * 清除物品的首选配方
+   */
+  clearPreferredRecipe(itemId: string): void {
+    this.recipePreferences.delete(itemId);
   }
 
   /**
@@ -155,10 +170,31 @@ export class CalculationService {
    * @private
    */
   private findRecipeByOutput(itemId: string): Recipe | undefined {
+    const preferredRecipeId = this.recipePreferences.get(itemId);
+    if (preferredRecipeId) {
+      const preferredRecipe = this.recipeMap.get(preferredRecipeId);
+      if (preferredRecipe && preferredRecipe.output.some(output => output.item.id === itemId)) {
+        return preferredRecipe;
+      }
+    }
+
     return this.recipes.find(recipe => 
       recipe.output.some(output => output.item.id === itemId)
     );
   }
+
+  /**
+   * 获取所有可以生产指定物品的配方
+   * @param itemId
+   * @returns 开头生产该物品的所有配方
+   */
+  getRecipesByOutput(itemId:string):Recipe[]{
+    return this.recipes.filter(recipe => 
+      recipe.output.some(output => output.item.id === itemId)
+    );
+  }
+
+  //some方法是返回一个还是返回所有
 
   /**
    * 获取配方中特定输出物品的数量
@@ -228,7 +264,7 @@ export class CalculationService {
     
     return this.buildDependencyTree(recipe, new Set<string>());
   }
-
+  
   /**
    * 构建配方依赖树
    * @param recipe 配方

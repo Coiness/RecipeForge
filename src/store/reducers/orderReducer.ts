@@ -1,7 +1,6 @@
-import { ADD_ORDER,UPDATE_ORDER,DELETE_ORDER,SET_ORDERS,ORDER_ERROR } from "../actions/orderActions";
+import { ADD_ORDER,UPDATE_ORDER,DELETE_ORDER,SET_ORDERS,ORDER_ERROR,ORDER_LOADING} from "../actions/orderActions";
 import type { Order } from '../../types';
 
-//这个是我们正在维护的状态吗？其中的loadding属性是什么，干什么用的
 interface OrderState {
     orders: Order[];
     loading: boolean;
@@ -16,7 +15,7 @@ const initialState: OrderState = {
 
 export default function orderReducer(state = initialState, action: any): OrderState {
     switch (action.type) {
-        case 'ORDER_LOADING':
+        case ORDER_LOADING:
             return {
                 ...state,
                 loading: action.loading

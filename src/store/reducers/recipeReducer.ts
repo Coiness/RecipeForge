@@ -1,4 +1,4 @@
-import { ADD_RECIPE,DELETE_RECIPE,UPDATE_RECIPE,RECIPE_ERROR,SET_RECIPES } from "../actions/recipeActions";
+import { ADD_RECIPE,DELETE_RECIPE,UPDATE_RECIPE,RECIPE_ERROR,SET_RECIPES, RECIPE_LOADING} from "../actions/recipeActions";
 import type { Recipe } from '../../types';
 
 interface RecipeState {
@@ -15,7 +15,7 @@ const initialState: RecipeState = {
 
 export default function recipeReducer(state = initialState, action: any): RecipeState {
     switch (action.type) {
-        case 'RECIPE_LOADING':
+        case RECIPE_LOADING:
             return {
                 ...state,
                 loading: action.loading

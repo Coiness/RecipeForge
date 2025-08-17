@@ -1,4 +1,4 @@
-import { ADD_ITEM,UPDATE_ITEM,DELETE_ITEM,SET_ITEMS,ITEM_ERROR } from "../actions/itemActions";
+import { ADD_ITEM,UPDATE_ITEM,DELETE_ITEM,SET_ITEMS,ITEM_ERROR,ITEM_LOADING} from "../actions/itemActions";
 import type {Item} from  '../../types'
 
 interface ItemState{
@@ -15,7 +15,7 @@ const initialState:ItemState = {
 
 export default function itemReducer(state = initialState,action:any):ItemState{
     switch(action.type){
-        case 'ITEM_LOADING':
+        case ITEM_LOADING:
             return {
                 ...state,
                 loading: action.loading

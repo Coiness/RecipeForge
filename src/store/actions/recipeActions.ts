@@ -11,12 +11,13 @@ export const UPDATE_RECIPE = 'UPDATE_RECIPE';
 export const DELETE_RECIPE = 'DELETE_RECIPE';
 export const SET_RECIPES = 'SET_RECIPES';
 export const RECIPE_ERROR = 'RECIPE_ERROR';
+export const RECIPE_LOADING = 'RECIPE_LOADING';
 
 // 3. 定义 Action  函数
 export const addRecipe = (name: string, input: Item_For_Recipe[], output: Item_For_Recipe[]) => {
     return async(dispatch:Dispatch) =>{
         try {
-            dispatch({ type: 'RECIPE_LOADING', loading: true });
+            dispatch({ type: RECIPE_LOADING, loading: true });
             const newRecipe = recipeService.createRecipe(name, input, output);
             dispatch({
                 type: ADD_RECIPE,
@@ -38,7 +39,7 @@ export const addRecipe = (name: string, input: Item_For_Recipe[], output: Item_F
 export const updateRecipe = (id: string, updates: Partial<Omit<Recipe, 'id'>>) => {
     return async (dispatch:Dispatch) => {
         try{
-            dispatch({type: 'RECIPE_LOADING', loading: true});
+            dispatch({type: RECIPE_LOADING, loading: true});
             const updateRecipe = recipeService.updateRecipe(id,updates)
             dispatch({
                 type: UPDATE_RECIPE,
@@ -61,7 +62,7 @@ export const updateRecipe = (id: string, updates: Partial<Omit<Recipe, 'id'>>) =
 export const deleteRecipe = (id: string) => {
     return async (dispatch: Dispatch) => {
         try {
-            dispatch({ type: 'RECIPE_LOADING', loading: true });
+            dispatch({ type: RECIPE_LOADING, loading: true });
             recipeService.deleteRecipe(id);
             dispatch({
                 type: DELETE_RECIPE,
@@ -82,7 +83,7 @@ export const deleteRecipe = (id: string) => {
 export const setRecipes = (recipes: Recipe[]) => {
     return async (dispatch: Dispatch) => {
         try {
-            dispatch({ type: 'RECIPE_LOADING', loading: true });
+            dispatch({ type: RECIPE_LOADING, loading: true });
             dispatch({
                 type: SET_RECIPES,
                 payload: recipes,
