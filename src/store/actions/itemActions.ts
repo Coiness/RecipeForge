@@ -10,6 +10,7 @@ export const DELETE_ITEM = 'DELETE_ITEM';
 export const SET_ITEMS = 'SET_ITEMS';
 export const ITEM_ERROR = 'ITEM_ERROR';
 export const ITEM_LOADING = 'ITEM_LOADING'; 
+export const SELECT_ITEM = 'SELECT_ITEM';
 
 // 使用 loading 标志而不是单独的 action
 export const addItem = (name: string, iconUrl: string = '') => {
@@ -105,4 +106,11 @@ export const setItems = (items:Item[])=>{
       throw error;
     }
   }
+}
+
+export const setSelectedItem = (item:Item|null) =>{
+    return {
+      type: SELECT_ITEM,
+      payload: item
+    }
 }

@@ -18,6 +18,7 @@ export const CALCULATION_ERROR = 'CALCULATION_ERROR';
 export const CLEAR_CALCULATION_RESULTS = 'CLEAR_CALCULATION_RESULTS';
 export const SET_PREFERRED_RECIPE = 'SET_PREFERRED_RECIPE';
 export const CLEAR_PREFERRED_RECIPE = 'CLEAR_PREFERRED_RECIPE';
+export const GET_ITEM_RECIPES = 'GET_ITEM_RECIPES';
 
 /**
  * 设置物品的首选制作配方
@@ -63,6 +64,8 @@ export const getAvailableRecipesForItem = (itemId: string) => {
   };
 };
 
+
+
 /**
  * 设置计算服务使用的配方列表
  */
@@ -85,7 +88,6 @@ export const setCalculationRecipes = (recipes: Recipe[]) => {
     }
   };
 };
-
 
 
 /**

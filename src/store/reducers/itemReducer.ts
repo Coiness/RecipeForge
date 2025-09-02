@@ -1,16 +1,18 @@
-import { ADD_ITEM,UPDATE_ITEM,DELETE_ITEM,SET_ITEMS,ITEM_ERROR,ITEM_LOADING} from "../actions/itemActions";
+import { ADD_ITEM,UPDATE_ITEM,DELETE_ITEM,SET_ITEMS,ITEM_ERROR,ITEM_LOADING,SELECT_ITEM} from "../actions/itemActions";
 import type {Item} from  '../../types'
 
 interface ItemState{
     items: Item[];
     loading: boolean;
     error: string | null;
+    selectedItem:Item|null;
 }
 
 const initialState:ItemState = {
     items:[],
     loading: false,
-    error: null
+    error: null,
+    selectedItem:null,
 }
 
 export default function itemReducer(state = initialState,action:any):ItemState{
@@ -21,6 +23,11 @@ export default function itemReducer(state = initialState,action:any):ItemState{
                 loading: action.loading
             }
 
+        case SELECT_ITEM:
+            return{
+                ...state,
+                selectedItem:action.payload,
+            }
 
         case ADD_ITEM:
             return{

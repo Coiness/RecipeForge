@@ -9,7 +9,8 @@ import {
   CALCULATION_ERROR,
   CLEAR_CALCULATION_RESULTS,
   SET_PREFERRED_RECIPE,
-  CLEAR_PREFERRED_RECIPE
+  CLEAR_PREFERRED_RECIPE,
+  GET_ITEM_RECIPES
 } from '../actions/calculationActions';
 import type { Recipe, Item_For_Recipe } from '../../types';
 
@@ -52,6 +53,9 @@ export default function calculationReducer(state = initialState, action: any): C
           [action.payload.itemId]: action.payload.recipeId
         }
       };
+
+    
+
 
     case CLEAR_PREFERRED_RECIPE:
       const updatedPreferences = { ...state.preferredRecipes };

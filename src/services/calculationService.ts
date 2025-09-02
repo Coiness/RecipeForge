@@ -186,7 +186,7 @@ export class CalculationService {
   /**
    * 获取所有可以生产指定物品的配方
    * @param itemId
-   * @returns 开头生产该物品的所有配方
+   * @returns 生产该物品的所有配方
    */
   getRecipesByOutput(itemId:string):Recipe[]{
     return this.recipes.filter(recipe => 
@@ -194,7 +194,12 @@ export class CalculationService {
     );
   }
 
-  //some方法是返回一个还是返回所有
+  getRecipeByInput(itemId:string):Recipe[]{
+    return this.recipes.filter(recipe => 
+      recipe.input.some(input => input.item.id === itemId)
+    );
+  }
+
 
   /**
    * 获取配方中特定输出物品的数量

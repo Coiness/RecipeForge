@@ -60,7 +60,7 @@ export class ItemService {
         const newItem:Item = {
             id: uuidv4(),
             name: name.trim(),
-            iconUrl: iconUrl.trim() || 'default-icon.png' // 使用默认图标
+            iconUrl: iconUrl.trim() || '' 
         }
 
         this.items.push(newItem);
@@ -198,6 +198,8 @@ export class ItemService {
         this.items = sorted; // 更新物品列表
         return sorted;
     }
+
+    
 }
 
 /**

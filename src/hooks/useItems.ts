@@ -1,9 +1,10 @@
-import { useState, useCallback } from 'react';
+import {  useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from './useRedux';
 import { 
   addItem, 
   updateItem, 
   deleteItem, 
+  setSelectedItem
 } from '../store/actions/itemActions';
 import type { Item } from '../types';
 
@@ -13,10 +14,8 @@ import type { Item } from '../types';
 export const useItems = () => {
   // 从Redux store获取状态
   const dispatch = useAppDispatch();
-  const { items, loading, error } = useAppSelector(state => state.items);
+  const { items, loading, error ,selectedItem} = useAppSelector(state => state.items);
   
-  // 本地状态，用于跟踪当前选中的物品
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   
 
   /**
@@ -41,7 +40,7 @@ export const useItems = () => {
       
       // 如果当前选中的是这个物品，更新选中状态
       if (selectedItem?.id === id) {
-        setSelectedItem(updatedItem);
+        dispatch(setSelectedItem(updatedItem));
       }
       
       return updatedItem;
@@ -60,7 +59,7 @@ export const useItems = () => {
       
       // 如果删除的是当前选中的物品，清除选中状态
       if (selectedItem?.id === id) {
-        setSelectedItem(null);
+        dispatch(setSelectedItem(null));
       }
     } catch (error) {
       console.error('删除物品失败:', error);
@@ -83,7 +82,7 @@ export const useItems = () => {
    */
   const selectItem = useCallback((id: string) => {
     const item = items.find(item => item.id === id);
-    setSelectedItem(item || null);
+    dispatch(setSelectedItem(item || null));
     return item;
   }, [items]);
   
@@ -91,7 +90,7 @@ export const useItems = () => {
    * 清除当前选中的物品
    */
   const clearSelection = useCallback(() => {
-    setSelectedItem(null);
+    dispatch(setSelectedItem(null));
   }, []);
   
 

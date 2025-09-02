@@ -5,7 +5,7 @@ export const Footer = () => {
     const currentYear = new Date().getFullYear();
     
     return (
-        <footer className="bg-gray-800 text-white py-6">
+        <footer className="bg-gray-800 text-white py-4">
             <div className="container mx-auto px-4">
                 <div className="flex flex-col space-y-2">
                     {/* 联系方式和项目地址 */}

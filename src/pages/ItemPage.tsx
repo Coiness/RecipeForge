@@ -4,8 +4,12 @@ import { ItemList } from "../component/itemList";
 export const ItemPage = () => {
     return(
         <div className="flex h-full">
-            <ItemList />
-            <ItemCard />
+            <div className="w-2/5 pr-4">
+                <ItemList />
+            </div>
+            <div className="w-3/5 pl-4">
+                <ItemCard />
+            </div>
         </div>
     )
 }
