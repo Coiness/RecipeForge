@@ -11,4 +11,5 @@ export interface Recipe{
 export interface Recipe_For_Order {
     recipe: Recipe;
     amount: number;  // 数量作为配方的固有属性
+    level: number; // 添加这个属性
 }

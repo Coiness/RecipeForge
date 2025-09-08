@@ -1,4 +1,4 @@
-import type { Order,Recipe_For_Order } from "../types";
+import type { Order,Recipe_For_Order,TargetItem } from "../types";
 import {v4 as uuidv4} from 'uuid';
 
 /**
@@ -52,7 +52,7 @@ export class OrderService{
      * @param recipes 订单中的配方列表
      * @returns 新创建的订单对象
      */
-    createOrder(name:string,recipes: Recipe_For_Order[]): Order {
+    createOrder(name:string,targetItems:TargetItem[],recipes: Recipe_For_Order[]): Order {
         if(!name.trim()){
             throw new Error("订单名称不能为空");
         }
@@ -61,7 +61,8 @@ export class OrderService{
             id: uuidv4(),
             name,
             status: "pending", // 默认状态为待处理
-            recipes: [...recipes]
+            recipes: [...recipes],
+            targetItems: targetItems
         };
 
         this.orders.push(newOrder);

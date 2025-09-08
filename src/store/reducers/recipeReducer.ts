@@ -1,16 +1,18 @@
-import { ADD_RECIPE,DELETE_RECIPE,UPDATE_RECIPE,RECIPE_ERROR,SET_RECIPES, RECIPE_LOADING} from "../actions/recipeActions";
+import { ADD_RECIPE,DELETE_RECIPE,UPDATE_RECIPE,SELECT_RECIPE,RECIPE_ERROR,SET_RECIPES, RECIPE_LOADING} from "../actions/recipeActions";
 import type { Recipe } from '../../types';
 
 interface RecipeState {
     recipes: Recipe[];
     loading: boolean;
     error: string | null;
+    selectedRecipe: Recipe | null;
 }
 
 const initialState: RecipeState = {
     recipes: [],
     loading: false,
-    error: null
+    error: null,
+    selectedRecipe: null,
 };
 
 export default function recipeReducer(state = initialState, action: any): RecipeState {
@@ -20,6 +22,13 @@ export default function recipeReducer(state = initialState, action: any): Recipe
                 ...state,
                 loading: action.loading
             };
+
+        case SELECT_RECIPE:
+            return {
+                ...state,
+                selectedRecipe: action.payload,
+            };
+
 
         case ADD_RECIPE:
             return {

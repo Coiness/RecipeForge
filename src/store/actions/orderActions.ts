@@ -1,5 +1,5 @@
 import { createOrderService } from "../../services/orderService"
-import type { Order,Recipe_For_Order } from "../../types"
+import type { Order,Recipe_For_Order,TargetItem} from "../../types"
 import type { Dispatch } from "redux";
 
 //1.创建服务实例
@@ -14,15 +14,16 @@ export const UPDATE_ORDER = 'UPDATE_ORDER';
 export const SET_ORDERS = 'SET_ORDERS'; 
 export const ORDER_ERROR = 'ORDER_ERROR';
 export const ORDER_LOADING = 'ORDER_LOADING';
+export const SELECT_ORDER = 'SELECT_ORDER';
 
-export const addOrder = (name:string,recipes:Recipe_For_Order[]) =>{
+export const addOrder = (name:string,targetItems:TargetItem[],recipes:Recipe_For_Order[]) =>{
     return async (dispatch: Dispatch) => {
         try{
             dispatch({
             type: ORDER_LOADING, 
             loading: true})
 
-            const newOrder = orderService.createOrder(name, recipes);
+            const newOrder = orderService.createOrder(name,targetItems, recipes);
 
             dispatch( {
             type: ADD_ORDER,
@@ -53,6 +54,7 @@ export const updateOrder = (id:string,updates:Partial<Omit<Order,'id'>>) =>{
                 payload: updatedOrder,
                 loading: false
             });
+            return updatedOrder;
         }catch(error){
             dispatch({
                 type: ORDER_ERROR,
@@ -103,5 +105,12 @@ export const setOrders = (orders: Order[]) => {
                 loading: false
             });
         }
+    }
+}
+
+export const selectOrder = (order: Order | null) => {
+    return{
+        type:SELECT_ORDER,
+        payload: order
     }
 }

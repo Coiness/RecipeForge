@@ -18,6 +18,10 @@ const localStorageMiddleware:Middleware = store => next => action => {
         items:state.items,
         recipes:state.recipes,
         orders:state.orders,
+        calculation:{
+            materials:state.calculation.materials,
+            preferredRecipes:state.calculation.preferredRecipes
+        }
     }));
 
     return result;
@@ -33,7 +37,14 @@ const loadInitialState = () => {
         return {
             items: parsedState.items || undefined,
             recipes: parsedState.recipes || undefined,
-            orders: parsedState.orders || undefined,
+            orders: parsedState.orders || undefined || {
+                materials:{},
+                preferredRecipes:{},
+                currentCalculation:{},
+                circularDependencies:{},
+                loading:false,
+                error:null
+            }
         }
     }catch(error){
         console.error('加载初始状态失败:', error);

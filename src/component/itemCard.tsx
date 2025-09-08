@@ -16,8 +16,6 @@ export const ItemCard = () => {
 
     const {
         selectedItem,
-        loading,
-        error,
         modifyItem,
         removeItem,
     } = useItems();

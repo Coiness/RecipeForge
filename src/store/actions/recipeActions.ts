@@ -6,6 +6,7 @@ import type {Dispatch} from 'redux';
 const recipeService = createRecipeService();
 
 // 2. 定义 Action 类型常量
+export const SELECT_RECIPE = 'SELECT_RECIPE';
 export const ADD_RECIPE = 'ADD_RECIPE';
 export const UPDATE_RECIPE = 'UPDATE_RECIPE';
 export const DELETE_RECIPE = 'DELETE_RECIPE';
@@ -100,4 +101,9 @@ export const setRecipes = (recipes: Recipe[]) => {
     };
 }
 
-
+export const selectRecipe = (recipe:Recipe|null) => {
+    return {
+        type: SELECT_RECIPE,
+        payload: recipe,
+    }
+}

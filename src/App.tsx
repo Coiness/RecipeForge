@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { Suspense, lazy } from "react"
 import MainLayout from "./layout/MainLayout"
+import RecipePage from "./pages/RecipePage"
+import { OrderPage } from "./pages/orderPage"
 
 // 使用 lazy 懒加载页面组件
 // const Dashboard = lazy(() => import("./pages/Dashboard"))
@@ -15,6 +17,8 @@ function App() {
         <Routes>
           <Route path="/" element={<MainLayout />}>
             <Route path="items" element={<ItemPage />} />
+            <Route path="recipes" element={<RecipePage />} />
+            <Route path="orders" element={<OrderPage />}></Route>
           </Route>
         </Routes>
       </Suspense>

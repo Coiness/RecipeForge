@@ -4,7 +4,8 @@ import {
   addRecipe, 
   updateRecipe, 
   deleteRecipe, 
-  setRecipes 
+  setRecipes,
+  selectRecipe as selectRecipeAction
 } from '../store/actions/recipeActions';
 import type { Recipe, Item_For_Recipe } from '../types';
 
@@ -14,10 +15,8 @@ import type { Recipe, Item_For_Recipe } from '../types';
 export const useRecipes = () => {
   // 从Redux store获取状态
   const dispatch = useAppDispatch();
-  const { recipes, loading, error } = useAppSelector(state => state.recipes);
+  const { recipes, loading, error,selectedRecipe} = useAppSelector(state => state.recipes);
   
-  // 本地状态，用于跟踪当前选中的配方
-  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
 
   /**
    * 添加新配方
@@ -40,9 +39,9 @@ export const useRecipes = () => {
       const updatedRecipe = await dispatch(updateRecipe(id, updates));
       
       // 如果当前选中的是这个配方，更新选中状态
-      setSelectedRecipe(current => 
-        current?.id === id ? updatedRecipe : current
-      );
+      if (selectedRecipe?.id === id) {
+        dispatch(selectRecipeAction(updatedRecipe));
+      }
       
       return updatedRecipe;
     } catch (error) {
@@ -59,9 +58,10 @@ export const useRecipes = () => {
       await dispatch(deleteRecipe(id));
       
       // 如果删除的是当前选中的配方，清除选中状态
-      setSelectedRecipe(current => 
-        current?.id === id ? null : current
-      );
+      if(selectedRecipe?.id === id){
+        dispatch(selectRecipeAction(null));
+      }
+
     } catch (error) {
       console.error('删除配方失败:', error);
       throw error;
@@ -108,7 +108,7 @@ export const useRecipes = () => {
    */
   const selectRecipe = useCallback((id: string) => {
     const recipe = findRecipe(id);
-    setSelectedRecipe(recipe);
+    dispatch(selectRecipeAction(recipe));
     return recipe;
   }, [findRecipe]);
   
@@ -116,7 +116,7 @@ export const useRecipes = () => {
    * 清除当前选中的配方
    */
   const clearSelection = useCallback(() => {
-    setSelectedRecipe(null);
+    dispatch(selectRecipeAction(null));
   }, []);
   
   /**

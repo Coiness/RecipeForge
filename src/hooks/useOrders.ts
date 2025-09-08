@@ -13,24 +13,22 @@
  * - 使用useAppDispatch和useAppSelector来与Redux交互
  */
 
-import { useCallback, useState} from "react";
+import { useCallback} from "react";
 import { useAppDispatch,useAppSelector } from "./useRedux";
-import { addOrder,updateOrder,deleteOrder} from "../store/actions/orderActions";
-import type { Order, Recipe_For_Order } from '../types';
+import { addOrder,updateOrder,deleteOrder,selectOrder as selectOrder_action} from "../store/actions/orderActions";
+import type { Order, Recipe_For_Order,TargetItem } from '../types';
 
 // 提供订单管理功能的自定义Hook
 export const useOrder = () =>{
     //从Redux store获取状态
     const dispatch = useAppDispatch();
-    const { orders, loading, error } = useAppSelector(state => state.orders);
+    const { orders, loading, error,selectedOrder } = useAppSelector(state => state.orders);
 
-    // 本地状态，用于跟踪当前选中的订单
-    const [selectedOrder,setSelectedOrder] = useState<Order | null>(null);
     
     // 添加新订单
-    const createOrder = useCallback(async (name:string,recipes:Recipe_For_Order[])=>{
+    const createOrder = useCallback(async (name:string,targetItems:TargetItem[],recipes:Recipe_For_Order[])=>{
         try{
-            const newOrder = await dispatch(addOrder(name,recipes));
+            const newOrder = await dispatch(addOrder(name,targetItems,recipes));
             return newOrder;
         }catch(error){
             console.error('添加订单失败:', error);
@@ -42,7 +40,7 @@ export const useOrder = () =>{
     const modifyOrder = useCallback(async (
         id:string,
         updates:Partial<Omit<Order,'id'>>
-    )=>{
+    ):Promise<Order | null>=>{
         try{
             const update_Order = await dispatch(updateOrder(id,updates))
             return update_Order;
@@ -55,7 +53,7 @@ export const useOrder = () =>{
     // 删除订单
     const removeOrder = useCallback(async(id:string)=>{
         try{
-            const removedOrder = await deleteOrder(id)
+            const removedOrder = await dispatch(deleteOrder(id));
             return removedOrder
         }catch(error){
             console.error('删除订单失败',error)
@@ -74,13 +72,13 @@ export const useOrder = () =>{
     // 选择订单
     const selectOrder = useCallback((id:string)=>{
         const order = orders.find(order => order.id === id);
-        setSelectedOrder(order || null);
+        dispatch(selectOrder_action(order || null))
         return order;
     },[orders])
 
     // 清除当前选中的订单
     const clearSelection = useCallback(()=>{
-        setSelectedOrder(null);
+        dispatch(selectOrder_action(null))
     } ,[])
 
     return {

@@ -10,14 +10,13 @@ import {
   CLEAR_CALCULATION_RESULTS,
   SET_PREFERRED_RECIPE,
   CLEAR_PREFERRED_RECIPE,
-  GET_ITEM_RECIPES
 } from '../actions/calculationActions';
 import type { Recipe, Item_For_Recipe } from '../../types';
 
 interface CalculationState {
   recipes: Recipe[];
   preferredRecipes: Record<string, string>;
-  materials: Item_For_Recipe[];
+  materials:Record<string, Item_For_Recipe[]>;
   currentCalculation: {
     type: 'recipe' | 'order' | 'bulk' | null;
     id: string | string[] | null;
@@ -32,7 +31,7 @@ interface CalculationState {
 const initialState: CalculationState = {
   recipes: [],
   preferredRecipes: {},
-  materials: [],
+  materials:{},
   currentCalculation: {
     type: null,
     id: null
@@ -141,7 +140,10 @@ export default function calculationReducer(state = initialState, action: any): C
     case CLEAR_CALCULATION_RESULTS:
       return {
         ...state,
-        materials: [],
+        materials: {
+          ...state.materials,
+          [action.payload.orderId]: [action.payload.materials]
+        },
         currentCalculation: {
           type: null,
           id: null

@@ -1,16 +1,18 @@
-import { ADD_ORDER,UPDATE_ORDER,DELETE_ORDER,SET_ORDERS,ORDER_ERROR,ORDER_LOADING} from "../actions/orderActions";
+import { ADD_ORDER,UPDATE_ORDER,DELETE_ORDER,SET_ORDERS,ORDER_ERROR,ORDER_LOADING,SELECT_ORDER} from "../actions/orderActions";
 import type { Order } from '../../types';
 
 interface OrderState {
     orders: Order[];
     loading: boolean;
     error: string | null;
+    selectedOrder:Order | null;
 }
 
 const initialState: OrderState = {
     orders: [],
     loading: false,
-    error: null
+    error: null,
+    selectedOrder: null
 };
 
 export default function orderReducer(state = initialState, action: any): OrderState {
@@ -20,6 +22,12 @@ export default function orderReducer(state = initialState, action: any): OrderSt
                 ...state,
                 loading: action.loading
             };
+
+        case SELECT_ORDER:
+            return{
+                ...state,
+                selectedOrder:action.payload
+            }
 
         case ADD_ORDER:
             return {
