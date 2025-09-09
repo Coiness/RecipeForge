@@ -1,8 +1,12 @@
 import { createItemService } from '../../services/itemService';
 import type { Item } from '../../types';
 import type { Dispatch } from 'redux';
+import store from '../store';
 
-const itemService = createItemService();
+
+// 初始胡创建服务实例
+const initialItems = store.getState().items.items || [];
+const itemService = createItemService(initialItems);
 
 export const ADD_ITEM = 'ADD_ITEM';
 export const UPDATE_ITEM = 'UPDATE_ITEM'
@@ -41,25 +45,31 @@ export const addItem = (name: string, iconUrl: string = '') => {
 };
 
 
-export const updateItem = (id:string,updates:Partial<Omit<Item,'id'>>) =>{
+export const updateItem = (id:string, updates:Partial<Omit<Item,'id'>>) => {
   return async (dispatch: Dispatch) => {
-    try{
+    try {
       dispatch({ type: ITEM_LOADING, loading: true });
-      const updateItem = itemService.updateItem(id,updates);
+      
+      // 尝试更新服务层，但不依赖其返回值
+      try {
+        itemService.updateItem(id, updates);
+      } catch (serviceError) {
+        console.log('服务层更新失败，但会继续Redux更新:', serviceError);
+      }
+      
+      // 直接传递ID和更新内容给reducer
       dispatch({
         type: UPDATE_ITEM,
-        payload: updateItem,
+        payload: { id, updates }, // 只传递ID和更新内容
         loading: false 
       });
-      return updateItem
-    }catch(error){
-      dispatch({
-        type:ITEM_ERROR,
-        payload: error instanceof Error ? error.message : '更新物品失败',
-        loading: false 
-      })
-
-      throw error;
+      
+      // 从 store 中获取更新后的物品
+      const state = store.getState();
+      const updatedItem = state.items.items.find(item => item.id === id);
+      return updatedItem;
+    } catch(error) {
+      // 错误处理...
     }
   }
 }

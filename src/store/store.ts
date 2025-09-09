@@ -27,26 +27,34 @@ const localStorageMiddleware:Middleware = store => next => action => {
     return result;
 }
 
+// filepath: [store.ts](http://_vscodecontentref_/2)
 // 设置初始状态
 const loadInitialState = () => {
-    try{
+    try {
         const savedState = localStorage.getItem('recipeforge_state')
-        if(!savedState) return {};
+        console.log('加载的初始状态:', savedState);
+        if (!savedState) return {};
 
         const parsedState = JSON.parse(savedState);
+        console.log('解析的初始状态:', parsedState);
+
+        // 返回正确的嵌套结构
         return {
-            items: parsedState.items || undefined,
-            recipes: parsedState.recipes || undefined,
-            orders: parsedState.orders || undefined || {
-                materials:{},
-                preferredRecipes:{},
-                currentCalculation:{},
-                circularDependencies:{},
-                loading:false,
-                error:null
+            // 直接返回嵌套结构，不需要重组
+            items: parsedState.items,
+            recipes: parsedState.recipes,
+            orders: parsedState.orders,
+            calculation: parsedState.calculation || {
+                materials: {},
+                preferredRecipes: {},
+                currentCalculation: { type: null, id: null },
+                circularDependencies: {},
+                dependencyTrees: {},
+                loading: false,
+                error: null
             }
         }
-    }catch(error){
+    } catch (error) {
         console.error('加载初始状态失败:', error);
         return {}
     }
