@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from './useRedux';
 import {
-  setCalculationRecipes,
   calculateRecipeMaterials,
   calculateOrderMaterials,
   calculateBulkOrders,
@@ -20,6 +19,7 @@ import type { Recipe, Order } from '../types';
 export const useCalculation = () => {
   // 从Redux store获取状态
   const dispatch = useAppDispatch();
+
   const { 
     recipes,
     preferredRecipes,
@@ -31,18 +31,6 @@ export const useCalculation = () => {
     error 
   } = useAppSelector(state => state.calculation);
 
-  /**
-   * 设置计算服务使用的配方列表
-   * 通常在应用启动时或配方列表更改时调用
-   */
-  const setupCalculation = useCallback((recipes: Recipe[]) => {
-    try {
-      dispatch(setCalculationRecipes(recipes));
-    } catch (error) {
-      console.error('设置计算配方失败:', error);
-      throw error;
-    }
-  }, [dispatch]);
 
   /**
    * 计算单个配方所需的原材料
@@ -207,10 +195,7 @@ export const useCalculation = () => {
     preferredRecipes,
     circularDependencies,
     dependencyTrees,
-    
-    // 配方设置
-    setupCalculation,
-    
+        
     // 材料计算
     calculateMaterialsForRecipe,
     calculateMaterialsForOrder,

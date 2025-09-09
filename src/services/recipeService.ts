@@ -1,49 +1,39 @@
-import type { Recipe,Item_For_Recipe  } from "../types";
-import {v4 as uuidv4} from 'uuid';
+import type { Recipe, Item_For_Recipe } from "../types";
+import { v4 as uuidv4 } from 'uuid';
 
 export class RecipeService {
-    private recipes: Recipe[] = [];
     /**
-     * 实现的功能
-     * 1.创建配方
-     * 2.获取所有配方
-     * 3.根据ID获取配方
-     * 4.根据名称搜索配方
-     * 5.更新配方
-     * 6.删除配方
+     * 验证配方名称
+     * @param name 配方名称
+     * @throws 如果名称为空则抛出错误
      */
-
-    constructor(initalRecipes: Recipe[]){
-        this.recipes = [...initalRecipes]
-    }
-
-    /**
-     * 获取所有配方
-     * @returns 配方列表
-     */
-    getAllRecipes(): Recipe[] {
-        return [...this.recipes];
+    validateRecipeName(name?: string): void {
+        if (name !== undefined && !name.trim()) {
+            throw new Error("配方名称不能为空");
+        }
     }
 
     /**
      * 根据ID获取配方
+     * @param recipes 配方列表
      * @param id 配方ID
      * @returns 配方对象或undefined
      */
-    getRecipeById(id:string):Recipe | undefined{
-        return this.recipes.find(recipe => recipe.id === id);
+    getRecipeById(recipes: Recipe[], id: string): Recipe | undefined {
+        return recipes.find(recipe => recipe.id === id);
     }
 
     /**
      * 根据名称搜索配方
+     * @param recipes 配方列表
      * @param query 搜索关键词
      * @returns 匹配的配方列表
      */
-    searchItems(query:string):Recipe[]{
-        const lowercaseQuery = query.toLocaleLowerCase()
-        return this.recipes.filter(item =>
-            item.name.toLocaleLowerCase().includes(lowercaseQuery)
-        )
+    searchRecipes(recipes: Recipe[], query: string): Recipe[] {
+        const lowercaseQuery = query.toLowerCase();
+        return recipes.filter(recipe =>
+            recipe.name.toLowerCase().includes(lowercaseQuery)
+        );
     }
 
     /**
@@ -53,101 +43,146 @@ export class RecipeService {
      * @param output 输出物品列表
      * @returns 新创建的配方对象
      */
-    createRecipe(name:string, input:Item_For_Recipe[],output:Item_For_Recipe[]):Recipe{
-        if(!name.trim()){
-            throw new Error("配方名称不能为空")
+    createRecipe(name: string, input: Item_For_Recipe[], output: Item_For_Recipe[]): Recipe {
+        this.validateRecipeName(name);
+
+        if (input.length === 0) {
+            throw new Error("配方必须包含至少一个输入物品");
         }
 
-        const newRecipe: Recipe = {
+        if (output.length === 0) {
+            throw new Error("配方必须包含至少一个输出物品");
+        }
+
+        return {
             id: uuidv4(),
             name: name.trim(),
             input: [...input],
             output: [...output]
-        }
-
-        return newRecipe;
+        };
     }
 
-    updateRecipe(id:string,updates:Partial<Omit<Recipe,'id'>>):Recipe{
-        const index = this.recipes.findIndex(recipe => recipe.id === id);
-
-        if(index === -1){
-            throw new Error(`配方ID ${id}不存在`)
+    /**
+     * 准备配方更新
+     * @param recipe 原配方
+     * @param updates 更新内容
+     * @returns 更新后的配方
+     */
+    prepareRecipeUpdate(recipe: Recipe, updates: Partial<Omit<Recipe, 'id'>>): Recipe {
+        if (updates.name !== undefined) {
+            this.validateRecipeName(updates.name);
         }
 
-        //不能用 || 连接，因为undefined无法调用trim()
-        //如果updates.name存在且不为空，则使用trim()去除两端空格
-        if(updates.name !== undefined && updates.name.trim()){
-            throw new Error("配方名称不能为空");
-        }
-
-        const updatedRecipe: Recipe = {
-            ...this.recipes[index],
+        return {
+            ...recipe,
             ...updates,
-            ...(updates.name && {name:updates.name.trim()})
-        }
-
-        this.recipes[index] = updatedRecipe;
-        return updatedRecipe;
+            ...(updates.name && { name: updates.name.trim() })
+        };
     }
-
-    /**
-     * 删除配方
-     * @param id 配方ID
-     * @return 是否删除成功
-     */
-    deleteRecipe(id:string):boolean{
-        const initialLength = this.recipes.length;
-        this.recipes = this.recipes.filter(recipe => recipe.id !== id);
-        return this.recipes.length < initialLength; // 如果长度减少了，说明删除成功
-    }
-
-    /**
-     * todo: 批量导入配方
-     */
-
-    /**
-     * todo: 批量导出配方
-     */
 
     /**
      * 检查配方名称是否已存在
+     * @param recipes 配方列表
      * @param name 配方名称
-     * @returns 如果存在则返回true，否则返回false
+     * @param excludeId 要排除的配方ID（更新时使用）
+     * @returns 名称是否已被使用
      */
-    isNameTaken(name:string):boolean{
-        return this.recipes.some(recipe => recipe.name.toLocaleLowerCase() === name.toLocaleLowerCase());
-    }
-
-    /**
-     * 清空配方列表
-     */
-    clearRecipes():void {
-        this.recipes = [];
+    isNameTaken(recipes: Recipe[], name: string, excludeId?: string): boolean {
+        return recipes.some(recipe => 
+            recipe.name.toLowerCase() === name.toLowerCase() && 
+            recipe.id !== excludeId
+        );
     }
 
     /**
      * 按名称排序配方
+     * @param recipes 配方列表
      * @param ascending 是否升序排序
-     * @return 排序后的配方列表
+     * @returns 排序后的配方列表
      */
-    sortRecipesByName(ascending:boolean = true):Recipe[]{
-        const sortedRecipes = [...this.recipes].sort((a,b)=>
+    sortRecipesByName(recipes: Recipe[], ascending: boolean = true): Recipe[] {
+        return [...recipes].sort((a, b) =>
             ascending
-            ? a.name.localeCompare(b.name)
-            : b.name.localeCompare(a.name)
-        )
+                ? a.name.localeCompare(b.name)
+                : b.name.localeCompare(a.name)
+        );
+    }
+
+    /**
+     * 验证配方数据完整性
+     * @param recipe 配方对象
+     * @throws 如果数据不完整则抛出错误
+     */
+    validateRecipe(recipe: Recipe): void {
+        if (!recipe.id) {
+            throw new Error("配方ID不能为空");
+        }
         
-        this.recipes = sortedRecipes; // 更新配方列表
-        return sortedRecipes;
+        if (!recipe.name || !recipe.name.trim()) {
+            throw new Error("配方名称不能为空");
+        }
+        
+        if (!recipe.input || recipe.input.length === 0) {
+            throw new Error("配方必须包含至少一个输入物品");
+        }
+        
+        if (!recipe.output || recipe.output.length === 0) {
+            throw new Error("配方必须包含至少一个输出物品");
+        }
+    }
+
+    /**
+     * 批量导入配方
+     * @param currentRecipes 当前配方列表
+     * @param newRecipes 要导入的配方
+     * @param overwrite 是否覆盖同ID配方
+     * @returns 合并后的配方列表
+     */
+    processRecipeImport(currentRecipes: Recipe[], newRecipes: Recipe[], overwrite: boolean = false): Recipe[] {
+        if (!Array.isArray(newRecipes)) {
+            throw new Error("导入的配方必须是一个数组");
+        }
+
+        // 验证所有导入的配方
+        newRecipes.forEach((recipe, index) => {
+            try {
+                this.validateRecipe(recipe);
+            } catch (error) {
+                throw new Error(`导入的配方 #${index + 1} 无效: ${error instanceof Error ? error.message : '未知错误'}`);
+            }
+        });
+
+        if (overwrite) {
+            // 创建导入配方ID集合
+            const importIds = new Set(newRecipes.map(recipe => recipe.id));
+            // 过滤掉要被覆盖的配方
+            const filteredRecipes = currentRecipes.filter(recipe => !importIds.has(recipe.id));
+            // 返回合并后的结果
+            return [...filteredRecipes, ...newRecipes];
+        } else {
+            // 简单地添加新配方
+            return [...currentRecipes, ...newRecipes];
+        }
+    }
+
+    /**
+     * 查找使用特定物品的配方
+     * @param recipes 配方列表
+     * @param itemId 物品ID
+     * @returns 使用该物品的配方列表
+     */
+    findRecipesUsingItem(recipes: Recipe[], itemId: string): Recipe[] {
+        return recipes.filter(recipe => 
+            recipe.input.some(input => input.item.id === itemId) ||
+            recipe.output.some(output => output.item.id === itemId)
+        );
     }
 }
 
 /**
  * 创建配方服务实例
- * @param initialRecipes 初始配方列表
- * @return 配方服务实例
+ * @returns 配方服务实例
  */
-export function createRecipeService(initialRecipes: Recipe[] = []): RecipeService {
-    return new RecipeService(initialRecipes);
+export function createRecipeService(): RecipeService {
+    return new RecipeService();
 }

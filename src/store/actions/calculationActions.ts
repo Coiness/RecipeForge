@@ -1,7 +1,7 @@
 import { createCalculationService } from '../../services/calculationService';
-import type { Recipe, Order} from '../../types';
+import type { Recipe, Order } from '../../types';
 import type { Dispatch } from 'redux';
-
+import type { RootState } from '../store';
 
 // 创建计算服务实例
 const calculationService = createCalculationService();
@@ -21,84 +21,54 @@ export const CLEAR_PREFERRED_RECIPE = 'CLEAR_PREFERRED_RECIPE';
 export const GET_ITEM_RECIPES = 'GET_ITEM_RECIPES';
 
 /**
- * 设置物品的首选制作配方
- */
-export const setPreferredRecipe = (itemId: string, recipeId: string) => {
-  return (dispatch: Dispatch) => {
-    calculationService.setPreferredRecipe(itemId, recipeId);
-    
-    dispatch({
-      type: SET_PREFERRED_RECIPE,
-      payload: { itemId, recipeId }
-    });
-  };
-};
-
-/**
- * 清除物品的首选制作配方
- */
-export const clearPreferredRecipe = (itemId: string) => {
-  return (dispatch: Dispatch) => {
-    calculationService.clearPreferredRecipe(itemId);
-    
-    dispatch({
-      type: CLEAR_PREFERRED_RECIPE,
-      payload: { itemId }
-    });
-  };
-};
-
-/**
  * 获取可以制作指定物品的所有配方
  */
 export const getAvailableRecipesForItem = (itemId: string) => {
-  return (dispatch: Dispatch) => {
-    const recipes = calculationService.getRecipesByOutput(itemId);
-    
-    dispatch({
-      type: 'GET_AVAILABLE_RECIPES',
-      payload: { itemId, recipes }
-    });
-    
-    return recipes;
-  };
-};
-
-
-
-/**
- * 设置计算服务使用的配方列表
- */
-export const setCalculationRecipes = (recipes: Recipe[]) => {
-  return (dispatch: Dispatch) => {
+  return (dispatch: Dispatch, getState: () => RootState) => {
     try {
-      // 更新计算服务中的配方
-      calculationService.setRecipes(recipes);
+      // 从Redux获取配方列表
+      const { recipes } = getState().recipes;
+      
+      // 使用服务层方法找到生产该物品的所有配方
+      const itemRecipes = calculationService.getRecipesByOutput(recipes, itemId);
       
       dispatch({
-        type: SET_CALCULATION_RECIPES,
-        payload: recipes
+        type: GET_ITEM_RECIPES,
+        payload: { itemId, recipes: itemRecipes }
       });
+      
+      return itemRecipes;
     } catch (error) {
       dispatch({
         type: CALCULATION_ERROR,
-        payload: error instanceof Error ? error.message : '更新计算配方失败',
+        payload: error instanceof Error ? error.message : '获取物品配方失败',
         loading: false
       });
+      throw error;
     }
   };
 };
-
 
 /**
  * 计算单个配方所需的原材料
  */
 export const calculateRecipeMaterials = (recipeId: string, amount: number) => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: () => RootState) => {
     try {
       dispatch({ type: CALCULATION_LOADING, loading: true });
       
-      const materials = calculationService.calculateRecipeMaterials(recipeId, amount);
+      // 从Redux获取配方列表和偏好设置
+      const state = getState();
+      const { recipes } = state.recipes;
+      const { preferredRecipes } = state.calculation;
+      
+      // 使用服务层计算材料
+      const materials = calculationService.calculateRecipeMaterials(
+        recipes, 
+        recipeId, 
+        amount, 
+        preferredRecipes
+      );
       
       dispatch({
         type: CALCULATE_RECIPE_MATERIALS,
@@ -126,11 +96,21 @@ export const calculateRecipeMaterials = (recipeId: string, amount: number) => {
  * 计算订单所需的所有材料
  */
 export const calculateOrderMaterials = (order: Order) => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: () => RootState) => {
     try {
       dispatch({ type: CALCULATION_LOADING, loading: true });
       
-      const materials = calculationService.calculateOrderMaterials(order);
+      // 从Redux获取配方列表和偏好设置
+      const state = getState();
+      const { recipes } = state.recipes;
+      const { preferredRecipes } = state.calculation;
+      
+      // 使用服务层计算材料
+      const materials = calculationService.calculateOrderMaterials(
+        recipes,
+        order, 
+        preferredRecipes
+      );
       
       dispatch({
         type: CALCULATE_ORDER_MATERIALS,
@@ -157,11 +137,21 @@ export const calculateOrderMaterials = (order: Order) => {
  * 批量计算多个订单所需的材料
  */
 export const calculateBulkOrders = (orders: Order[]) => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: () => RootState) => {
     try {
       dispatch({ type: CALCULATION_LOADING, loading: true });
       
-      const materials = calculationService.calculateBulkOrders(orders);
+      // 从Redux获取配方列表和偏好设置
+      const state = getState();
+      const { recipes } = state.recipes;
+      const { preferredRecipes } = state.calculation;
+      
+      // 使用服务层计算材料
+      const materials = calculationService.calculateBulkOrders(
+        recipes,
+        orders, 
+        preferredRecipes
+      );
       
       dispatch({
         type: CALCULATE_BULK_ORDERS,
@@ -188,11 +178,21 @@ export const calculateBulkOrders = (orders: Order[]) => {
  * 检查配方中是否存在循环依赖
  */
 export const checkCircularDependency = (recipe: Recipe) => {
-  return (dispatch: Dispatch) => {
+  return (dispatch: Dispatch, getState: () => RootState) => {
     try {
       dispatch({ type: CALCULATION_LOADING, loading: true });
       
-      const hasCircular = calculationService.checkCircularDependency(recipe);
+      // 从Redux获取配方列表和偏好设置
+      const state = getState();
+      const { recipes } = state.recipes;
+      const { preferredRecipes } = state.calculation;
+      
+      // 使用服务层检查循环依赖
+      const hasCircular = calculationService.checkCircularDependency(
+        recipes,
+        recipe, 
+        preferredRecipes
+      );
       
       dispatch({
         type: CHECK_CIRCULAR_DEPENDENCY,
@@ -219,11 +219,21 @@ export const checkCircularDependency = (recipe: Recipe) => {
  * 获取配方的依赖树结构
  */
 export const getRecipeDependencyTree = (recipeId: string) => {
-  return (dispatch: Dispatch) => {
+  return (dispatch: Dispatch, getState: () => RootState) => {
     try {
       dispatch({ type: CALCULATION_LOADING, loading: true });
       
-      const dependencyTree = calculationService.getRecipeDependencyTree(recipeId);
+      // 从Redux获取配方列表和偏好设置
+      const state = getState();
+      const { recipes } = state.recipes;
+      const { preferredRecipes } = state.calculation;
+      
+      // 使用服务层获取依赖树
+      const dependencyTree = calculationService.getRecipeDependencyTree(
+        recipes,
+        recipeId, 
+        preferredRecipes
+      );
       
       dispatch({
         type: GET_DEPENDENCY_TREE,
@@ -243,6 +253,26 @@ export const getRecipeDependencyTree = (recipeId: string) => {
       });
       throw error;
     }
+  };
+};
+
+/**
+ * 设置偏好配方
+ */
+export const setPreferredRecipe = (itemId: string, recipeId: string) => {
+  return {
+    type: SET_PREFERRED_RECIPE,
+    payload: { itemId, recipeId }
+  };
+};
+
+/**
+ * 清除偏好配方
+ */
+export const clearPreferredRecipe = (itemId: string) => {
+  return {
+    type: CLEAR_PREFERRED_RECIPE,
+    payload: { itemId }
   };
 };
 

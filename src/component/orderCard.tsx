@@ -13,7 +13,7 @@ import React, { useState, useEffect } from 'react';
 import { useOrder } from '../hooks/useOrders';
 import { useCalculation } from '../hooks/useCalculation';
 import { useItems } from '../hooks/useItems';
-import type { Order, TargetItem, Recipe_For_Order } from '../types';
+import type {  TargetItem } from '../types';
 
 export const OrderCard = () => {
     // 从自定义hooks获取数据和操作方法
