@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useMemo, useEffect, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from './useRedux';
 import { 
   addRecipe, 
@@ -8,6 +8,7 @@ import {
   selectRecipe as selectRecipeAction
 } from '../store/actions/recipeActions';
 import type { Recipe, Item_For_Recipe } from '../types';
+import { useRecipeWithLatestData } from './useRecipeWithLatestData';
 
 /**
  * 提供配方管理功能的自定义Hook
@@ -16,7 +17,23 @@ export const useRecipes = () => {
   // 从Redux store获取状态
   const dispatch = useAppDispatch();
   const { recipes, loading, error,selectedRecipe} = useAppSelector(state => state.recipes);
+  const items = useAppSelector(state => state.items.items);
   
+  const updatedSelectedRecipe = useRecipeWithLatestData(selectedRecipe?.id || '');
+
+  const updatedRecipes = useMemo(() => {
+    return recipes.map((recipe => ({
+      ...recipe,
+      input:recipe.input.map(input => {
+        const latestItem = items.find(i => i.id === input.item.id) || input.item;
+        return { ...input, item: latestItem };
+      }),
+      output: recipe.output.map(output => {
+        const latestItem = items.find(i => i.id === output.item.id) || output.item;
+        return { ...output, item: latestItem };
+      })
+    })))
+  }, [recipes, items])
 
   /**
    * 添加新配方
@@ -197,10 +214,10 @@ export const useRecipes = () => {
   // 返回状态和所有操作函数
   return {
     // 状态
-    recipes,
+    recipes:updatedRecipes,
     loading,
     error,
-    selectedRecipe,
+    selectedRecipe:updatedSelectedRecipe,
     
     // 基本操作
     createRecipe,

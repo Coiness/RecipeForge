@@ -406,7 +406,7 @@ export const RecipeForm = ({
               : 'bg-blue-500 hover:bg-blue-600'
           }`}
         >
-          {mode === 'add' ? '添加' : '保存'}
+          {mode === 'add' ? '创建' : '保存'}
         </button>
       </div>
     </div>

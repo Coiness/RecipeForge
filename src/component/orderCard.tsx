@@ -98,15 +98,19 @@ export const OrderCard = () => {
     // 加载配方树
     const loadRecipeTree = async () => {
         if (!selectedOrder) return;
+
         
         try {
+            console.log('加载配方树...');
             // 如果订单有配方，加载第一个配方的依赖树
+            console.log('selectedOrder.recipes:', selectedOrder.recipes);
             if (selectedOrder.recipes && selectedOrder.recipes.length > 0) {
                 const mainRecipe = selectedOrder.recipes[0];
                 const tree = await getRecipeTree(mainRecipe.recipe.id);
                 setRecipeTree(tree);
             } else {
                 setRecipeTree(null);
+                console.log('订单无配方')
             }
         } catch (error) {
             console.error('加载配方树失败:', error);
@@ -458,7 +462,7 @@ export const OrderCard = () => {
                     <div>
                         <h3 className="text-lg font-medium text-gray-700 mb-3">配方依赖树</h3>
                         
-                        {calculationLoading ? (
+                        {false ? (
                             <div className="flex justify-center py-10">
                                 <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
                             </div>

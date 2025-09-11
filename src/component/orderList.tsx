@@ -31,7 +31,7 @@ export const OrderList = () => {
     } = useOrder();
     
     const { items } = useItems();
-    const { calculateMaterialsForOrder, getRecipesForItem } = useCalculation();
+    const { calculateMaterialsForOrder, getRecipeTree } = useCalculation();
     const dispatch = useDispatch();
 
     // 本地状态
@@ -138,6 +138,7 @@ export const OrderList = () => {
     
     // 处理创建订单
     const handleCreateOrder = async () => {
+        console.log('创建订单:', newOrderName, targetItems);
         if (!newOrderName.trim()) {
             alert('订单名称不能为空');
             return;
@@ -152,6 +153,9 @@ export const OrderList = () => {
             // 创建订单时，recipes先传空数组，由计算服务自动生成
             const newOrder = await createOrder(newOrderName, targetItems, []);
             
+            // 没有创建配方树
+            const recipeTree = await getRecipeTree(targetItems[0].item.id);
+            console.log('生成的配方树:', recipeTree);
             // 计算订单所需材料
             await calculateMaterialsForOrder(newOrder);
             

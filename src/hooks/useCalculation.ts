@@ -53,9 +53,12 @@ export const useCalculation = () => {
    * @param order 需要计算的订单
    * @returns 计算所需的材料列表
    */
+
+  // mark
   const calculateMaterialsForOrder = useCallback(async (order: Order) => {
     try {
       const materials = await dispatch(calculateOrderMaterials(order));
+      console.log('计算订单材料:', materials);
       return materials;
     } catch (error) {
       console.error('计算订单材料失败:', error);
@@ -71,6 +74,7 @@ export const useCalculation = () => {
   const calculateMaterialsForOrders = useCallback(async (orders: Order[]) => {
     try {
       const materials = await dispatch(calculateBulkOrders(orders));
+      console.log('批量计算订单材料:', materials);
       return materials;
     } catch (error) {
       console.error('批量计算订单材料失败:', error);
@@ -98,8 +102,11 @@ export const useCalculation = () => {
    * @param recipeId 配方ID
    * @returns 依赖树结构
    */
+
+  // 无人引用？？？
   const getRecipeTree = useCallback(async (recipeId: string) => {
     try {
+      console.log('获取依赖树 for recipeId:', recipeId);
       const dependencyTree = await dispatch(getRecipeDependencyTree(recipeId));
       return dependencyTree;
     } catch (error) {
@@ -115,6 +122,7 @@ export const useCalculation = () => {
    */
   const getRecipesForItem = useCallback((itemId: string) => {
     try {
+      console.log('获取物品配方 for itemId:', itemId);
       return dispatch(getAvailableRecipesForItem(itemId));
     } catch (error) {
       console.error('获取物品配方失败:', error);

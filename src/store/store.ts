@@ -32,11 +32,9 @@ const localStorageMiddleware:Middleware = store => next => action => {
 const loadInitialState = () => {
     try {
         const savedState = localStorage.getItem('recipeforge_state')
-        console.log('加载的初始状态:', savedState);
         if (!savedState) return {};
 
         const parsedState = JSON.parse(savedState);
-        console.log('解析的初始状态:', parsedState);
 
         // 返回正确的嵌套结构
         return {

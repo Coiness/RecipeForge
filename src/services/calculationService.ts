@@ -63,7 +63,9 @@ export class CalculationService {
     order: Order, 
     recipePreferences: Record<string, string> = {}
   ): Item_For_Recipe[] {
+    console.log('calculationService.calculateOrderMaterials', { order });
     if (!order || !order.recipes || order.recipes.length === 0) {
+      console.log('订单为空或没有配方，返回空材料列表');
       return [];
     }
 
@@ -187,6 +189,7 @@ export class CalculationService {
     itemId: string, 
     recipePreferences: Record<string, string> = {}
   ): Recipe | undefined {
+    console.log('calculationService.findRecipeByOutput', { itemId, recipePreferences });
     const preferredRecipeId = recipePreferences[itemId];
     if (preferredRecipeId) {
       const preferredRecipe = recipes.find(r => r.id === preferredRecipeId);
@@ -294,6 +297,7 @@ export class CalculationService {
   ): any {
     const recipeMap = this.createRecipeMap(recipes);
     const recipe = recipeMap.get(recipeId);
+    console.log('calculationService.getRecipeDependencyTree', { recipeId, recipePreferences });
     
     if (!recipe) {
       throw new Error(`配方 ${recipeId} 不存在`);
@@ -317,6 +321,7 @@ export class CalculationService {
     visited: Set<string>,
     recipePreferences: Record<string, string> = {}
   ): any {
+    console.log('calculationService.buildDependencyTree', { recipe });
     if (visited.has(recipe.id)) {
       return { name: recipe.name, circular: true };
     }

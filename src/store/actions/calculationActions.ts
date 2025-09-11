@@ -28,6 +28,7 @@ export const getAvailableRecipesForItem = (itemId: string) => {
     try {
       // 从Redux获取配方列表
       const { recipes } = getState().recipes;
+      console.log("calculationActions.getAvailableRecipesForItem", { itemId, recipes });
       
       // 使用服务层方法找到生产该物品的所有配方
       const itemRecipes = calculationService.getRecipesByOutput(recipes, itemId);
@@ -62,6 +63,8 @@ export const calculateRecipeMaterials = (recipeId: string, amount: number) => {
       const { recipes } = state.recipes;
       const { preferredRecipes } = state.calculation;
       
+
+      console.log('计算配方材料...', { recipeId, amount });
       // 使用服务层计算材料
       const materials = calculationService.calculateRecipeMaterials(
         recipes, 
@@ -70,6 +73,7 @@ export const calculateRecipeMaterials = (recipeId: string, amount: number) => {
         preferredRecipes
       );
       
+      console.log('计算结果:', materials);
       dispatch({
         type: CALCULATE_RECIPE_MATERIALS,
         payload: {
@@ -228,6 +232,7 @@ export const getRecipeDependencyTree = (recipeId: string) => {
       const { recipes } = state.recipes;
       const { preferredRecipes } = state.calculation;
       
+      console.log('获取依赖树...', { recipeId });
       // 使用服务层获取依赖树
       const dependencyTree = calculationService.getRecipeDependencyTree(
         recipes,
